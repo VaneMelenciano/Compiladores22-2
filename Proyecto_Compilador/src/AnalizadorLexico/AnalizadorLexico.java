@@ -23,11 +23,6 @@ public static FileReader fileReader;
 
 public static void main(String args[]) throws FileNotFoundException, IOException {
     leerArchivo();
-    /*System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());*/
     System.out.println(retornarCadena());
 }
 
