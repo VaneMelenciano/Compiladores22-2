@@ -7,7 +7,7 @@ package AnalizadorLexico;
 //asdfgh
 /**
  *
- * @author Vanessa, Hugo, Aarón
+ * @author Vanessa Melenciano, Hugo Arroyo, Aarón Cano
  */
 import java.io.File;
 import java.io.FileNotFoundException;
