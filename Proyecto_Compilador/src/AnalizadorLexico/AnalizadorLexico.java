@@ -7,8 +7,8 @@ package AnalizadorLexico;
 //asdfgh
 //probando probando probando 1 2 3
 /**
- *
- * @author Vanessa, Hugo, Aarón
+ * prueba
+ * @author Vanessa Melenciano, Hugo Arroyo, Aarón Cano
  */
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,11 +24,6 @@ public static FileReader fileReader;
 
 public static void main(String args[]) throws FileNotFoundException, IOException {
     leerArchivo();
-    /*System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());
-    System.out.println(imprimirCaracteres());*/
     System.out.println(retornarCadena());
 }
 
