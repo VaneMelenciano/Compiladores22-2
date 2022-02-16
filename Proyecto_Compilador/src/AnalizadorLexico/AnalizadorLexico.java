@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 package AnalizadorLexico;
-//asdfgh
-//probando probando probando 1 2 3 4
 /**
  * prueba
  * @author Vanessa Melenciano, Hugo Arroyo, Aarón Cano
@@ -17,104 +15,175 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 
 public class AnalizadorLexico {
+
+    public static JFileChooser fileChooser;
+    public static File file;
+    public static FileReader fileReader;
     
-public static JFileChooser fileChooser;
-public static File file;
-public static FileReader fileReader;
+    public static String expresion;
+    public static char caracter;
 
-public static void main(String args[]) throws FileNotFoundException, IOException {
-    leerArchivo();
-    System.out.println(retornarCadena());
-}
+    public static void main(String args[]) throws FileNotFoundException, IOException {
+        leerArchivo();
+        System.out.println(retornarCadena());
+    }
 
-public static void leerArchivo() throws FileNotFoundException{
-    fileChooser = new JFileChooser();
-    fileChooser.setCurrentDirectory(new File("./"));
-    fileChooser.showOpenDialog(fileChooser);
+    //LEER ARCHIVO TXT//
+    public static void leerArchivo() throws FileNotFoundException {
+        fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("./"));
+        fileChooser.showOpenDialog(fileChooser);
 
-    file = fileChooser.getSelectedFile();
-    fileReader = new FileReader(file);
-}
+        file = fileChooser.getSelectedFile();
+        fileReader = new FileReader(file);
+    }
 
-public static int leerCaracter() throws IOException{
-    int c = fileReader.read();
-    return c;
-}
+    //LEER Y DEVOLVER CARACTERES DEL TXT SELECCIONADO////
+    public static char obtenerSiguienteCaracter() throws IOException {
+        int enteroLeido = leerTxtCaracter();
+        
+        //leerTxtCaracter devuelve -1 en caso de que no haya ningún caracter.
+        //si devuelve -1 no lo casteamos a char, ya que da un error.
+        //devolvemos '\0' para indicar vacío.
+        if(enteroLeido == -1) return '\0'; 
+        
+        char caracterADevolver = (char)enteroLeido;
+        
+        return caracterADevolver;
+    }
 
-public static char imprimirCaracteres() throws IOException{
-    int caracter = leerCaracter();
-    return (char)caracter;
-}
+    public static int leerTxtCaracter() throws IOException {
+        return fileReader.read();
+    }
+    ///////////////////////////////////////////////////
 
-//verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
-public static String retornarCadena()  throws IOException{
-    String cadena = ""; //para poner la expresion en caso de ser valida
-    char c = imprimirCaracteres(); //String c = imprimirCaracteres()+"";
-    
-    //Mayusculas: Character.isUpperCase(char c)
-    //Minusculas: Character.isLowerCase(char c)
+    //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
+    public static String retornarCadena() throws IOException {
+        expresion = ""; //para poner la expresion en caso de ser valida
+        caracter = obtenerSiguienteCaracter(); //String c = imprimirCaracteres()+"";
+
+        //Mayusculas: Character.isUpperCase(char c)
+        //Minusculas: Character.isLowerCase(char c)
+        
+        //REVISAR SI ES UNA PALABRA RESERVADA
+        if(expresionEsPalabraReservada()){
+            return expresion;
+        }
+        //si llega a este punto, no es palabra reservada.
+        System.out.println("Inválido para ser palabra reservada. Caracter inválido: " + caracter);
+        
+        //REVISAR SI ES UN IDENTIFICADOR
+        if(expresionEsIdentificador()){
+            //es identificador.
+            return expresion;
+        }
+        //si llega a esta parte del código, no es identificador.
+        System.out.println("Inválido para ser identificador. Caracter inválido: " + caracter);
+        
+        //REVISAR SI ES UNA CADENA DE ENTEROS O DECIMALES
+        if(expresionSonNumeros()){
+            //son números.
+            return expresion;
+        }
+        //si llega a esta parte del código, no son números.
+        System.out.println("Inválido para ser cadena de números. Caracter inválido: " + caracter);
+        
+        
+        
+        //Si llega a este punto, la expresión no es válida en ningún caso.
+        return ("La expresión no es válida en ningún caso. Carácter invalido: " + caracter);
+    }
+
+        //validar palabras reservadas. [A-Z]+
+    public static boolean expresionEsPalabraReservada() throws IOException{
+        System.out.println("VALIDANDO SI ES PALABRA RESERVADA...");
+        
+        if(Character.isUpperCase(caracter)){ //si es mayuscula. Puede ser palabra reservada
+            
+            while(Character.isUpperCase(caracter)){ //mientras el siguiente char sea mayúscula, continúa en el ciclo.
+                expresion += caracter;
+                caracter = obtenerSiguienteCaracter(); 
+            }
+            
+            if(caracter == '\0'){ //si ya agregró a cadena todas las mayusculas y ya no hay más letras
+                return true;
+            }
+        }
+        return false;
+    }
     
     //validar si cumple [a-z]+ [a-z]+ ( [a-z] | [A-Z] | [0-9] )^* .
-    if(Character.isLowerCase(c)){
-        System.out.println("VALIDANDO IDENTIFICADOR...");
-        //tiene una minuscula
-        cadena += c;
-        c=imprimirCaracteres(); //segundo caracter del txt
-        if(Character.isLowerCase(c)){
-            //tiene dos minusculas
-            cadena += c;
-             c = imprimirCaracteres();
-            while(Character.isLowerCase(c)==true){//mientras siga siendo minuscula  
-                cadena += c;
-                c = imprimirCaracteres();
-            }
-            while(Character.isLowerCase(c)==true || Character.isUpperCase(c)==true || Character.isDigit(c)){ //( [a-z] | [A-Z] | [0-9] )^*
-                cadena += c;
-                c = imprimirCaracteres();
-            }
-            if(46==(int)c){//  46 es . en codigo ASCII
-                //tiene el último carácter
-                cadena += c;
-                return cadena;
-            }else{
-                //no tiene punto final, está mal
-                return ("Carácter invalido: " + c);
-            }
-        }else{
-            //no tiene dos minusculas, está mal
-            return ("Carácter invalido: " + c);
-        }
-    }else if(Character.isDigit(c)){//es digito
-        //validar [0-9]+ (. [0-9]+)?
-        System.out.println("VALIDANDO IDENTIFICADOR...");
-        cadena += c;
-        c = imprimirCaracteres();
-        while(Character.isDigit(c)){
-            cadena += c;
-            c = imprimirCaracteres(); 
-        }
-        //System.out.println(c);
-        if(46==(int)c){ //si es punto, decimal
-            cadena += c;
-            c = imprimirCaracteres(); 
-            if(Character.isDigit(c)){ //si hay un digito después del punto
-                while(Character.isDigit(c)){
-                    cadena += c;
-                    c = imprimirCaracteres(); 
-                }
-                return cadena;
-            }else{ //no hay numero después del decimal, está mal
-                return ("Carácter invalido: " + c);
-            }
-        }else if(!String.valueOf(c).isEmpty()){
-           return cadena; 
-        }else{
-           return ("Carácter invalido: " + c); 
-        }
+    public static boolean expresionEsIdentificador() throws IOException {
+        System.out.println("VALIDANDO SI ES IDENTIFICADOR...");
         
-    }else{
-        //System.out.println("SIMBOLO NO ESTABLECIDO PARA INICIAR CADENA:");
-        return ("Carácter invalido: " + c);
+        if (Character.isLowerCase(caracter)) { //tiene una minuscula      
+            
+            expresion += caracter;
+            caracter = obtenerSiguienteCaracter(); //segundo caracter del txt
+            
+            if (Character.isLowerCase(caracter)) { //tiene dos minusculas
+                
+                expresion += caracter;
+                caracter = obtenerSiguienteCaracter();
+                
+                while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) { //( [a-z] | [A-Z] | [0-9] )^*
+                    expresion += caracter;
+                    caracter = obtenerSiguienteCaracter();
+                }
+                if (46 == (int) caracter) { //  46 es . en codigo ASCII
+                    //tiene el último carácter, es identificador.
+                   expresion += caracter;
+                    return true;
+                } else {
+                    //no tiene punto final, está mal
+                    return false;
+                }
+                
+            } else {
+                //no tiene dos minusculas, está mal
+                return false;
+            }
+        }
+        return false;
     }
-}
+    
+    //validar [0-9]+ (. [0-9]+)?
+    public static boolean expresionSonNumeros() throws IOException{
+        System.out.println("VALIDANDO SI SON NÚMEROS...");
+        
+        if(Character.isDigit(caracter)){ //revisar si es digito/número
+            expresion += caracter;
+            caracter = obtenerSiguienteCaracter();
+            
+            while(Character.isDigit(caracter)){ //mientras la expresión tenga números.
+                expresion += caracter;
+                caracter = obtenerSiguienteCaracter(); 
+            }
+            
+            if(46==(int)caracter){ //si es un punto, puede ser número decimal
+                
+                expresion += caracter;
+                caracter = obtenerSiguienteCaracter(); 
+                
+                if(Character.isDigit(caracter)){ //si hay un número después del punto, es decimal.
+                    
+                    while(Character.isDigit(caracter)){ //continúa revisando que lo que sigue sean números.
+                        expresion += caracter;
+                        caracter = obtenerSiguienteCaracter(); 
+                    }
+                    return true;
+                    
+                }else{ //no hay número después del decimal, es inválido.
+                    return false;
+                }
+                
+            }else if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+               return true; 
+            }else{
+               return false; 
+            }
+        }
+        return false;
+    }
+    
 }
