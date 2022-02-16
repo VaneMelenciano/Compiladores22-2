@@ -6,7 +6,7 @@
 package AnalizadorLexico;
 //asdfgh
 /**
- *
+ * prueba
  * @author Vanessa Melenciano, Hugo Arroyo, Aarón Cano
  */
 import java.io.File;
