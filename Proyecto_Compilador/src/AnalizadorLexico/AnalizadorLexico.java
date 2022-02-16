@@ -112,6 +112,16 @@ public static String retornarCadena()  throws IOException{
            return ("Carácter invalido: " + c); 
         }
         
+    }else if(Character.isUpperCase(c)){ //si es mayuscula. Para palabras reservadas
+        while(Character.isUpperCase(c)){
+            cadena += c;
+            c = imprimirCaracteres(); 
+        }
+        if(String.valueOf(c).isEmpty()){ //si ya agregró a cadena todas las mayusculas y ya no hay más letras
+            return cadena;
+        }else{
+           return ("Carácter invalido: " + c);  
+        }
     }else{
         //System.out.println("SIMBOLO NO ESTABLECIDO PARA INICIAR CADENA:");
         return ("Carácter invalido: " + c);
