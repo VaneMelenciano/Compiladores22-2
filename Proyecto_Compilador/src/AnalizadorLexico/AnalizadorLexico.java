@@ -171,7 +171,11 @@ public class AnalizadorLexico {
                         expresion += caracter;
                         caracter = obtenerSiguienteCaracter(); 
                     }
-                    return true;
+                    if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                        return true; 
+                     }else{
+                        return false; 
+                     }
                     
                 }else{ //no hay número después del decimal, es inválido.
                     return false;
