@@ -8,73 +8,25 @@ package AnalizadorLexico;
  * prueba
  * @author Vanessa Melenciano, Hugo Arroyo, Aarón Cano
  */
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+
 import java.io.IOException;
-import javax.swing.JFileChooser;
 
 public class AnalizadorLexico {
-
-    public static JFileChooser fileChooser;
-    public static File file;
-    public static FileReader fileReader;
     
-    public static String expresion;
+    public static String expresion, expresionLeida;
     public static char caracter;
-    
-    public static String expresionLeida;
     public static int contadorExpresionLeida;
 
-    public static void main(String args[]) throws FileNotFoundException, IOException {
-        //leerArchivo();
-
-        Tokenizador t = new Tokenizador();
-        
-        contadorExpresionLeida = 0;
-        expresionLeida = t.getTexto().get(0);
-        
-        System.out.println(retornarCadena());
-    }
-
-    //LEER Y DEVOLVER CARACTERES DEL TXT SELECCIONADO////
     public static char obtenerSiguienteCaracter(){
         char caracterAdevolver;
         try{
             caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
-        }catch(StringIndexOutOfBoundsException e){
+        }catch(StringIndexOutOfBoundsException e){ //En caso de que la expresión leida haya terminado, retorna '\0'
             caracterAdevolver = '\0';
         }
         contadorExpresionLeida++;
         return caracterAdevolver;
     }
-    
-    //LEER ARCHIVO TXT//
-    /*public static void leerArchivo() throws FileNotFoundException {
-        fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File("./"));
-        fileChooser.showOpenDialog(fileChooser);
-
-        file = fileChooser.getSelectedFile();
-        fileReader = new FileReader(file);
-    }
-    
-    public static char obtenerSiguienteCaracter() throws IOException {
-        int enteroLeido = leerTxtCaracter();
-        
-        //leerTxtCaracter devuelve -1 en caso de que no haya ningún caracter.
-        //si devuelve -1 no lo casteamos a char, ya que da un error.
-        //devolvemos '\0' para indicar vacío.
-        if(enteroLeido == -1) return '\0'; 
-        
-        char caracterADevolver = (char)enteroLeido;
-        
-        return caracterADevolver;
-    }
-    public static int leerTxtCaracter() throws IOException {
-        return fileReader.read();
-    }*/
-    ///////////////////////////////////////////////////
 
     //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
     public static String retornarCadena() throws IOException {
@@ -97,7 +49,7 @@ public class AnalizadorLexico {
         return ("La expresión no es válida en ningún caso. Carácter invalido: " + caracter);
     }
 
-        //validar palabras reservadas. [A-Z]+
+    //validar palabras reservadas. [A-Z]+
     public static boolean expresionEsPalabraReservada() throws IOException{
         System.out.println("VALIDANDO SI ES PALABRA RESERVADA...");
        
@@ -128,21 +80,16 @@ public class AnalizadorLexico {
                 
                 guardarCaracterYobtenerSiguiente();
                 
-                while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) { //( [a-z] | [A-Z] | [0-9] )^*
+                //( [a-z] | [A-Z] | [0-9] )^*
+                while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) {
                     guardarCaracterYobtenerSiguiente();
                 }
                 if (46 == (int) caracter) { //  46 es . en codigo ASCII
                     //tiene el último carácter, es identificador.
                    expresion += caracter;
                     return true;
-                } else {
-                    //no tiene punto final, está mal
-                    return false;
                 }
                 
-            } else {
-                //no tiene dos minusculas, está mal
-                return false;
             }
         }
         return false;
@@ -170,18 +117,10 @@ public class AnalizadorLexico {
                     }
                     if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
                         return true; 
-                     }else{
-                        return false; 
                      }
-                    
-                }else{ //no hay número después del decimal, es inválido.
-                    return false;
                 }
-                
             }else if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
                return true; 
-            }else{
-               return false; 
             }
         }
         return false;
@@ -191,6 +130,7 @@ public class AnalizadorLexico {
     public static boolean expresionEsSimbolo() throws IOException{
         System.out.println("VALIDANDO SI SON SÍMBOLOS...");
         
+        //validando '=='
         if(caracter == '='){
             guardarCaracterYobtenerSiguiente();
             if(caracter == '='){
@@ -199,6 +139,7 @@ public class AnalizadorLexico {
             }
         }
         
+        //validando '!='
         if(caracter == '!'){
             guardarCaracterYobtenerSiguiente();
             if(caracter == '='){
@@ -207,33 +148,19 @@ public class AnalizadorLexico {
             }
         }
         
+        //validando '<<' y '<='
         if(caracter == '<'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '<'){
+            if(caracter == '<' || caracter == '='){
                 guardarCaracterYobtenerSiguiente();
                 return true;
             }
         }
         
+        //validando '>>' y '>='
         if(caracter == '>'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '>'){
-                guardarCaracterYobtenerSiguiente();
-                return true;
-            }
-        }
-        
-        if(caracter == '<'){
-            guardarCaracterYobtenerSiguiente();
-            if(caracter == '='){
-                guardarCaracterYobtenerSiguiente();
-                return true;
-            }
-        }
-        
-        if(caracter == '>'){
-            guardarCaracterYobtenerSiguiente();
-            if(caracter == '='){
+            if(caracter == '>' || caracter == '='){
                 guardarCaracterYobtenerSiguiente();
                 return true;
             }
