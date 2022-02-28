@@ -21,8 +21,14 @@ public class LectorTxt {
     
     public ArrayList<String> lista;
     
+    public static int contadorExpresionLeida;
+    public static String expresionLeida;    
+    
     public LectorTxt(){
         leerArchivo();
+        
+        contadorExpresionLeida = 0;
+        expresionLeida = getTexto().get(0);
     }
     
     //Leer el archivo (csc o txt)
@@ -60,6 +66,17 @@ public class LectorTxt {
                     "ADVERTENCIA!!!", JOptionPane.WARNING_MESSAGE);
             
         }
+    }
+    
+    public static char obtenerSiguienteCaracter(){
+        char caracterAdevolver;
+        try{
+            caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
+        }catch(StringIndexOutOfBoundsException e){ //En caso de que la expresión leida haya terminado, retorna '\0'
+            caracterAdevolver = '\0';
+        }
+        contadorExpresionLeida++;
+        return caracterAdevolver;
     }
 
     public ArrayList<String> getTexto(){

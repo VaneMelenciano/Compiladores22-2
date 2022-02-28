@@ -13,25 +13,13 @@ import java.io.IOException;
 
 public class AnalizadorLexico {
     
-    public static String expresion, expresionLeida;
+    public static String expresion;
     public static char caracter;
-    public static int contadorExpresionLeida;
-
-    public static char obtenerSiguienteCaracter(){
-        char caracterAdevolver;
-        try{
-            caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
-        }catch(StringIndexOutOfBoundsException e){ //En caso de que la expresión leida haya terminado, retorna '\0'
-            caracterAdevolver = '\0';
-        }
-        contadorExpresionLeida++;
-        return caracterAdevolver;
-    }
 
     //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
     public static String retornarCadena() throws IOException {
         expresion = ""; //para poner la expresion en caso de ser valida
-        caracter = obtenerSiguienteCaracter();
+        caracter = LectorTxt.obtenerSiguienteCaracter();
         
         if(expresionEsPalabraReservada()) return expresion;
         System.out.println("Inválido para ser palabra reservada. Caracter inválido: " + caracter);
@@ -169,9 +157,10 @@ public class AnalizadorLexico {
         return false;
     }
     
+    
     public static void guardarCaracterYobtenerSiguiente() throws IOException{
         expresion += caracter;
-        caracter = obtenerSiguienteCaracter();
+        caracter = LectorTxt.obtenerSiguienteCaracter();
     }
     
 }
