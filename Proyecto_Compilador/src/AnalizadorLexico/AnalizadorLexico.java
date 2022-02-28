@@ -22,14 +22,35 @@ public class AnalizadorLexico {
     
     public static String expresion;
     public static char caracter;
+    
+    public static String expresionLeida;
+    public static int contadorExpresionLeida;
 
     public static void main(String args[]) throws FileNotFoundException, IOException {
-        leerArchivo();
+        //leerArchivo();
+
+        Tokenizador t = new Tokenizador();
+        
+        contadorExpresionLeida = 0;
+        expresionLeida = t.getTexto().get(0);
+        
         System.out.println(retornarCadena());
     }
 
+    //LEER Y DEVOLVER CARACTERES DEL TXT SELECCIONADO////
+    public static char obtenerSiguienteCaracter(){
+        char caracterAdevolver;
+        try{
+            caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
+        }catch(StringIndexOutOfBoundsException e){
+            caracterAdevolver = '\0';
+        }
+        contadorExpresionLeida++;
+        return caracterAdevolver;
+    }
+    
     //LEER ARCHIVO TXT//
-    public static void leerArchivo() throws FileNotFoundException {
+    /*public static void leerArchivo() throws FileNotFoundException {
         fileChooser = new JFileChooser();
         fileChooser.setCurrentDirectory(new File("./"));
         fileChooser.showOpenDialog(fileChooser);
@@ -37,8 +58,7 @@ public class AnalizadorLexico {
         file = fileChooser.getSelectedFile();
         fileReader = new FileReader(file);
     }
-
-    //LEER Y DEVOLVER CARACTERES DEL TXT SELECCIONADO////
+    
     public static char obtenerSiguienteCaracter() throws IOException {
         int enteroLeido = leerTxtCaracter();
         
@@ -51,58 +71,42 @@ public class AnalizadorLexico {
         
         return caracterADevolver;
     }
-
     public static int leerTxtCaracter() throws IOException {
         return fileReader.read();
-    }
+    }*/
     ///////////////////////////////////////////////////
 
     //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
     public static String retornarCadena() throws IOException {
         expresion = ""; //para poner la expresion en caso de ser valida
-        caracter = obtenerSiguienteCaracter(); //String c = imprimirCaracteres()+"";
-
-        //Mayusculas: Character.isUpperCase(char c)
-        //Minusculas: Character.isLowerCase(char c)
+        caracter = obtenerSiguienteCaracter();
         
-        //REVISAR SI ES UNA PALABRA RESERVADA
-        if(expresionEsPalabraReservada()){
-            return expresion;
-        }
-        //si llega a este punto, no es palabra reservada.
+        if(expresionEsPalabraReservada()) return expresion;
         System.out.println("Inválido para ser palabra reservada. Caracter inválido: " + caracter);
         
-        //REVISAR SI ES UN IDENTIFICADOR
-        if(expresionEsIdentificador()){
-            //es identificador.
-            return expresion;
-        }
-        //si llega a esta parte del código, no es identificador.
+        if(expresionEsIdentificador()) return expresion;
         System.out.println("Inválido para ser identificador. Caracter inválido: " + caracter);
-        
-        //REVISAR SI ES UNA CADENA DE ENTEROS O DECIMALES
-        if(expresionSonNumeros()){
-            //son números.
-            return expresion;
-        }
-        //si llega a esta parte del código, no son números.
+
+        if(expresionSonNumeros()) return expresion;
         System.out.println("Inválido para ser cadena de números. Caracter inválido: " + caracter);
         
+        if(expresionEsSimbolo()) return expresion;
+        System.out.println("Inválido para ser símbolo. Caracter inválido: " + caracter);
         
         
-        //Si llega a este punto, la expresión no es válida en ningún caso.
         return ("La expresión no es válida en ningún caso. Carácter invalido: " + caracter);
     }
 
         //validar palabras reservadas. [A-Z]+
     public static boolean expresionEsPalabraReservada() throws IOException{
         System.out.println("VALIDANDO SI ES PALABRA RESERVADA...");
-        
+       
+        //Mayusculas: Character.isUpperCase(char c)
+        //Minusculas: Character.isLowerCase(char c)
         if(Character.isUpperCase(caracter)){ //si es mayuscula. Puede ser palabra reservada
             
             while(Character.isUpperCase(caracter)){ //mientras el siguiente char sea mayúscula, continúa en el ciclo.
-                expresion += caracter;
-                caracter = obtenerSiguienteCaracter(); 
+                guardarCaracterYobtenerSiguiente();
             }
             
             if(caracter == '\0'){ //si ya agregró a cadena todas las mayusculas y ya no hay más letras
@@ -118,17 +122,14 @@ public class AnalizadorLexico {
         
         if (Character.isLowerCase(caracter)) { //tiene una minuscula      
             
-            expresion += caracter;
-            caracter = obtenerSiguienteCaracter(); //segundo caracter del txt
+            guardarCaracterYobtenerSiguiente();
             
             if (Character.isLowerCase(caracter)) { //tiene dos minusculas
                 
-                expresion += caracter;
-                caracter = obtenerSiguienteCaracter();
+                guardarCaracterYobtenerSiguiente();
                 
                 while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) { //( [a-z] | [A-Z] | [0-9] )^*
-                    expresion += caracter;
-                    caracter = obtenerSiguienteCaracter();
+                    guardarCaracterYobtenerSiguiente();
                 }
                 if (46 == (int) caracter) { //  46 es . en codigo ASCII
                     //tiene el último carácter, es identificador.
@@ -152,24 +153,20 @@ public class AnalizadorLexico {
         System.out.println("VALIDANDO SI SON NÚMEROS...");
         
         if(Character.isDigit(caracter)){ //revisar si es digito/número
-            expresion += caracter;
-            caracter = obtenerSiguienteCaracter();
+            guardarCaracterYobtenerSiguiente();
             
             while(Character.isDigit(caracter)){ //mientras la expresión tenga números.
-                expresion += caracter;
-                caracter = obtenerSiguienteCaracter(); 
+                guardarCaracterYobtenerSiguiente();
             }
             
             if(46==(int)caracter){ //si es un punto, puede ser número decimal
                 
-                expresion += caracter;
-                caracter = obtenerSiguienteCaracter(); 
+                guardarCaracterYobtenerSiguiente();
                 
                 if(Character.isDigit(caracter)){ //si hay un número después del punto, es decimal.
                     
                     while(Character.isDigit(caracter)){ //continúa revisando que lo que sigue sean números.
-                        expresion += caracter;
-                        caracter = obtenerSiguienteCaracter(); 
+                        guardarCaracterYobtenerSiguiente();
                     }
                     if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
                         return true; 
@@ -188,6 +185,66 @@ public class AnalizadorLexico {
             }
         }
         return false;
+    }
+    
+    //validar [== / != / << / >> / <= / >=]
+    public static boolean expresionEsSimbolo() throws IOException{
+        System.out.println("VALIDANDO SI SON SÍMBOLOS...");
+        
+        if(caracter == '='){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '='){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        if(caracter == '!'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '='){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        if(caracter == '<'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '<'){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        if(caracter == '>'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '>'){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        if(caracter == '<'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '='){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        if(caracter == '>'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '='){
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public static void guardarCaracterYobtenerSiguiente() throws IOException{
+        expresion += caracter;
+        caracter = obtenerSiguienteCaracter();
     }
     
 }
