@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -19,22 +20,32 @@ import javax.swing.JOptionPane;
  */
 public class LectorTxt {
     
-    public ArrayList<String> lista;
+    public static ArrayList<String> lista;
     
-    public static int contadorExpresionLeida;
+    public static int contadorExpresionLeida, contadorTokenLeido;
     public static String expresionLeida;    
+    public static boolean hayTokens;
     
     public LectorTxt(){
         leerArchivo();
         
+        contadorTokenLeido = 0;
         contadorExpresionLeida = 0;
-        expresionLeida = getTexto().get(0);
+        
+        hayTokens = true;
+        
+        try{
+            expresionLeida = getLista().get(contadorTokenLeido);
+        }catch(Exception e){
+            System.out.println("No se ha encontrado ningún token en el archivo");
+            System.exit(0); //Terminar todo el programa.
+        }
     }
     
     //Leer el archivo (csc o txt)
     public void leerArchivo(){
         String aux, texto;
-        lista = new ArrayList();
+        ArrayList<String> listaAux = new ArrayList();
         
         
         try {
@@ -55,9 +66,34 @@ public class LectorTxt {
                     
                     texto = aux; //guarda la linea del archivo leido en el String
                     
-                    lista.add(texto); //añade el String anterior a la lista
+                    listaAux.add(texto); //añade el String anterior a la lista
                 }
                 bufferedReader.close();
+                
+                //TOKENIZAR DATOS
+                lista = new ArrayList(); //un renglon
+                
+                for(String elemento : listaAux){
+                    StringTokenizer stringTokenizer = new StringTokenizer(elemento);
+                    while(stringTokenizer.hasMoreTokens()){
+                        lista.add(stringTokenizer.nextToken());
+                    }
+                }
+                
+                /*for (int i = 0; i < lista.size(); i++) { 
+
+                    StringTokenizer tokens = new StringTokenizer(lista.get(i), ","); //va separando los renglones guardado en la lista, por las comas
+
+                    while (tokens.hasMoreTokens()) { //mientras existan tokens (renglones)
+                        lista2.add(tokens.nextToken()); //guarda cada dato del renglo en la lista2
+                    }
+                    //34,6
+                    //double[] vector = new double[lista2.size() - 1]; //declarando un vector para guarda los datos
+                    int peso =Integer.parseInt ( lista2.get(0) );
+                    int beneficio =Integer.parseInt (  lista2.get(1) );
+                    this.getItems().add(new Item(peso, beneficio));
+                    lista2.clear();
+                }*/
             }
             
         }catch (IOException ex) {
@@ -72,14 +108,36 @@ public class LectorTxt {
         char caracterAdevolver;
         try{
             caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
+            contadorExpresionLeida++;
         }catch(StringIndexOutOfBoundsException e){ //En caso de que la expresión leida haya terminado, retorna '\0'
             caracterAdevolver = '\0';
+           
+            siguienteToken();
         }
-        contadorExpresionLeida++;
         return caracterAdevolver;
     }
+    
+    public static void siguienteToken(){
+        contadorTokenLeido++;
+        if(contadorTokenLeido < getLista().size()){
+            obtenerSiguienteToken();
+        }else{
+            noHayMasTokens();
+        }
+    }
+    
+    public static void obtenerSiguienteToken(){
+        expresionLeida = getLista().get(contadorTokenLeido);
+        contadorExpresionLeida = 0;
+    }
+    public static void noHayMasTokens(){
+        hayTokens = false;
+    }
 
-    public ArrayList<String> getTexto(){
+    public static ArrayList<String> getLista(){
         return lista;
+    }
+    public static boolean getHayTokens(){
+        return hayTokens;
     }
 }

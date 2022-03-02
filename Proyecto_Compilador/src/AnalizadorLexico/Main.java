@@ -16,6 +16,6 @@ public class Main {
     public static void main(String args[]) throws FileNotFoundException, IOException {
         LectorTxt t = new LectorTxt();
         
-        System.out.println(AnalizadorLexico.retornarCadena());
+        AnalizadorLexico.revisarListaDeTokens();
     }
 }

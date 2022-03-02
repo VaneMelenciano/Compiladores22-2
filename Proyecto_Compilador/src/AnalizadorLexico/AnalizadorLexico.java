@@ -17,24 +17,33 @@ public class AnalizadorLexico {
     public static char caracter;
 
     //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
-    public static String retornarCadena() throws IOException {
-        expresion = ""; //para poner la expresion en caso de ser valida
-        caracter = LectorTxt.obtenerSiguienteCaracter();
-        
-        if(expresionEsPalabraReservada()) return expresion;
-        System.out.println("Inválido para ser palabra reservada. Caracter inválido: " + caracter);
-        
-        if(expresionEsIdentificador()) return expresion;
-        System.out.println("Inválido para ser identificador. Caracter inválido: " + caracter);
+    public static void revisarListaDeTokens() throws IOException {
+        while(LectorTxt.getHayTokens() == true){
+            System.out.println("--- Nuevo Token --- ");
 
-        if(expresionSonNumeros()) return expresion;
-        System.out.println("Inválido para ser cadena de números. Caracter inválido: " + caracter);
+            expresion = ""; //para poner la expresion en caso de ser valida
+            caracter = LectorTxt.obtenerSiguienteCaracter();
+
+            if(validarToken() == true){
+                 System.out.println("Token válido: " + expresion + "\n");
+            }else{
+                System.out.println("Token inválido\n");
+            }
+            
+        }
+        System.out.println("\n No hay más tokens");
+    }
+    
+    public static boolean validarToken() throws IOException{
+        if(expresionEsPalabraReservada()) return true;
+
+        if(expresionEsIdentificador()) return true;
+
+        if(expresionSonNumeros()) return true;
+
+        if(expresionEsSimbolo()) return true;
         
-        if(expresionEsSimbolo()) return expresion;
-        System.out.println("Inválido para ser símbolo. Caracter inválido: " + caracter);
-        
-        
-        return ("La expresión no es válida en ningún caso. Carácter invalido: " + caracter);
+        return false;
     }
 
     //validar palabras reservadas. [A-Z]+
