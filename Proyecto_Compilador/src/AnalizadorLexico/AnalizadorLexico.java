@@ -16,22 +16,32 @@ public class AnalizadorLexico {
     public static String expresion;
     public static char caracter;
 
-    //verifica si la cadena leida en el txt es correcta según las expresiones regulares para los digitos o los identificadores
+    //Revisa si existen más tokens por revisar, si existe, llama a una función para validar los tokens individualmente.
     public static void revisarListaDeTokens() throws IOException {
-        while(LectorTxt.getHayTokens() == true){
+        
+        while(LectorTxt.getHayTokens() == true){  //mientras haya más tokens = true
+            
             System.out.println("--- Nuevo Token --- ");
 
-            expresion = ""; //para poner la expresion en caso de ser valida
-            caracter = LectorTxt.obtenerSiguienteCaracter();
-
+            inicializarToken();
+            
             if(validarToken() == true){
-                 System.out.println("Token válido: " + expresion + "\n");
+                 
+                System.out.println("Token válido: " + expresion + "\n");
+            
             }else{
-                System.out.println("Token inválido\n");
+                
+                System.out.println("Token inválido \n");
+            
             }
             
         }
         System.out.println("\n No hay más tokens");
+    }
+    
+    public static void inicializarToken(){
+        expresion = ""; //para poner la expresion en caso de ser valida
+        caracter = LectorTxt.obtenerSiguienteCaracter();
     }
     
     public static boolean validarToken() throws IOException{
@@ -50,8 +60,6 @@ public class AnalizadorLexico {
     public static boolean expresionEsPalabraReservada() throws IOException{
         System.out.println("VALIDANDO SI ES PALABRA RESERVADA...");
        
-        //Mayusculas: Character.isUpperCase(char c)
-        //Minusculas: Character.isLowerCase(char c)
         if(Character.isUpperCase(caracter)){ //si es mayuscula. Puede ser palabra reservada
             
             while(Character.isUpperCase(caracter)){ //mientras el siguiente char sea mayúscula, continúa en el ciclo.
@@ -165,7 +173,6 @@ public class AnalizadorLexico {
         
         return false;
     }
-    
     
     public static void guardarCaracterYobtenerSiguiente() throws IOException{
         expresion += caracter;

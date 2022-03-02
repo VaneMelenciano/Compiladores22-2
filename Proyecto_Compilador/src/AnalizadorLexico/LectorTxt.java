@@ -80,20 +80,6 @@ public class LectorTxt {
                     }
                 }
                 
-                /*for (int i = 0; i < lista.size(); i++) { 
-
-                    StringTokenizer tokens = new StringTokenizer(lista.get(i), ","); //va separando los renglones guardado en la lista, por las comas
-
-                    while (tokens.hasMoreTokens()) { //mientras existan tokens (renglones)
-                        lista2.add(tokens.nextToken()); //guarda cada dato del renglo en la lista2
-                    }
-                    //34,6
-                    //double[] vector = new double[lista2.size() - 1]; //declarando un vector para guarda los datos
-                    int peso =Integer.parseInt ( lista2.get(0) );
-                    int beneficio =Integer.parseInt (  lista2.get(1) );
-                    this.getItems().add(new Item(peso, beneficio));
-                    lista2.clear();
-                }*/
             }
             
         }catch (IOException ex) {
