@@ -53,6 +53,8 @@ public class AnalizadorLexico {
 
         if(expresionEsSimbolo()) return true;
         
+        if(expresionEsTexto()) return true;
+        
         return false;
     }
 
@@ -89,10 +91,13 @@ public class AnalizadorLexico {
                 while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) {
                     guardarCaracterYobtenerSiguiente();
                 }
-                if (46 == (int) caracter) { //  46 es . en codigo ASCII
+                /*if (46 == (int) caracter) { //  46 es . en codigo ASCII
                     //tiene el último carácter, es identificador.
                    expresion += caracter;
                     return true;
+                }*/
+                if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                        return true; 
                 }
                 
             }
@@ -172,6 +177,24 @@ public class AnalizadorLexico {
         }
         
         return false;
+    }
+    
+    //validar 'Texto'
+    public static boolean expresionEsTexto() throws IOException{
+        System.out.println("VALIDANDO SI ES PALABRA 'Texto'...");
+        
+        if(caracter == '\''){ //si inicia con comilla simple
+            guardarCaracterYobtenerSiguiente();
+            while(caracter != '\'' ){ //mientras no sea otra comilla simple
+                guardarCaracterYobtenerSiguiente();
+            }
+            
+            if(caracter == '\''){ //si termina con comilla simple
+                guardarCaracterYobtenerSiguiente();
+                return true;
+            }
+        }
+        return false;//si ya agregró a cadena todas los caracteres y ya no hay más letras
     }
     
     public static void guardarCaracterYobtenerSiguiente() throws IOException{
