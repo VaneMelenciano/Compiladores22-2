@@ -51,6 +51,8 @@ public class AnalizadorLexico {
 
         if(expresionSonNumeros()) return true;
 
+        if(expresionEsOperador()) return true;
+
         if(expresionEsSimbolo()) return true;
         
         if(expresionEsTexto()) return true;
@@ -135,6 +137,54 @@ public class AnalizadorLexico {
         }
         return false;
     }
+
+    //validar [+ / - / / / * / ^ / %]
+    public static boolean expresionEsOperador() throws IOException{
+        System.out.println("VALIDANDO SI SON SÍMBOLOS...");
+        //validando '+'
+        if(caracter == '+'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        //validando '-'
+        if(caracter == '-'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        //validando '/'
+        if(caracter == '/'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        //validando '*'
+        if(caracter == '*'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        //validando '^'
+        if(caracter == '^'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        //validando '%'
+        if(caracter == '%'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        return false;
+    }   
     
     //validar [== / != / << / >> / <= / >=]
     public static boolean expresionEsSimbolo() throws IOException{
@@ -173,6 +223,78 @@ public class AnalizadorLexico {
             if(caracter == '>' || caracter == '='){
                 guardarCaracterYobtenerSiguiente();
                 return true;
+            }
+        }
+
+        //validando '&'
+        if(caracter == '&'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '°'
+        if(caracter == '°'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '¬'
+        if(caracter == '¬'){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '('
+        if(caracter == 40){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+        
+        //validando ')'
+        if(caracter == 41){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '{'
+        if(caracter == 123){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '}'
+        if(caracter == 125){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando '['
+        if(caracter == 91){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
+            }
+        }
+
+        //validando ']'
+        if(caracter == 93){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
+                return true; 
             }
         }
         
