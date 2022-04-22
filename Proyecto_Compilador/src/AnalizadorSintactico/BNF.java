@@ -17,13 +17,13 @@ public class BNF {
     private String tokenProvisional;
     
     private void programa(){
-        //INICIO <Inicialización> <Instrucciones> <AuxInst> FIN
+        //INICIO <Inicialización> <Instrucciones> <MásInstrucciones> FIN
                 //Se manda llamar a la palabra del archivo porque se espera un terminal "INICIO"
         this.tokenProvisional = "INICIO"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("INICIO")){
             inicializacion();
             instrucciones();
-            auxInst();
+            masInstrucciones();
                 this.tokenProvisional = "FIN"; //AQUI SE MANDA LLAMAR AL LEXICO
                 if(this.tokenProvisional.equals("FIN")){
                     compilacionExitosa();
@@ -36,65 +36,63 @@ public class BNF {
         }
     }
 
-    private void auxInst() {
-        //. <Instrucciones> <AuxInst>
+    private void masInstrucciones() {
+        //<MásInstrucciones> ::= . <Instrucciones> <MásInstrucciones>
         this.tokenProvisional = "."; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals(".")){
             instrucciones();
-            auxInst(); // <- se manda llamar a si, después se arregla eso
+            masInstrucciones(); // <- se manda llamar a si, después se arregla eso
         }else this.imprimirErrorSimbolo(".");
         //ԑ <- después se programa
     }
 
     private void inicializacion() {
-        //<AuxCons> <AuxTipo> <AuxFoncion>
-        auxCons();
-        auxTipo();
-        auxFoncion();
+        //<Inicialización>::= <Constantes> <Variables> <Funciones>
+        constantes();
+        variables();
+        funciones();
     }
 
-    private void auxCons() {
-        //CONS  <Identificador> : <AuxNI>  <AuxI> .
+    private void constantes() {
+        //<Constantes> ::= CONS <EstructuraConstantes>.
         this.tokenProvisional = "CONS";  //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("CONS")){
-            this.tokenProvisional = "identificador"; //AQUI SE MANDA LLAMAR AL LEXICO
-            if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-                this.tokenProvisional = ":"; //AQUI SE MANDA LLAMAR AL LEXICO
-                if(this.tokenProvisional.equals(":")){
-                   auxNI();
-                    auxI(); 
-                    this.tokenProvisional = "."; //AQUI SE MANDA LLAMAR AL LEXICO
-                    if(this.tokenProvisional.equals(".")){
-                        //FALTA
-                    }else this.imprimirErrorSimbolo(".");
-                }else this.imprimirErrorSimbolo(":");
-            }else this.imprimirError("un identificador");
+            estructuraConstantes();
+            this.tokenProvisional = ".";  //AQUI SE MANDA LLAMAR AL LEXICO
+            if(this.tokenProvisional.equals(".")){
+                //FALTA
+            }else this.imprimirErrorSimbolo(".");
         }else this.imprimirErrorPalabra("CONS");
          //ԑ <- después se programa
     }
 
-    private void auxI() {
-        //~ <Identificador> : <AuxNI>  <AuxI>
-        // .
-        
+    private void masConstantes() {
+       //<MasConstantes> ::= ~ <EstructuraConstantes>
+       //<MasConstantes> ::= ɛ
         this.tokenProvisional = "~"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("~")){
-            this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-            if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-                this.tokenProvisional = ":";
-                if(this.tokenProvisional.equals(":")){
-                    auxNI();
-                    auxI();
-                }else{
-                    this.imprimirErrorSimbolo(":");
-                }
-            }else this.imprimirError("un identificador");
-        }else if(this.tokenProvisional.equals(".")){
-            //FALTA
-        }else this.imprimirErrorSimbolo("~ / .");
+            estructuraConstantes();
+        }else this.imprimirErrorSimbolo("~");
+    }
+    private void estructuraConstantes() {
+        //<EstructuraConstantes> ::= <AsignarIdentificador> <NumeroIdentificador>  <MasConstantes>
+        asignarIdentificador();
+        numeroIdentificador();
+        masConstantes();
+    }
+
+    private void asignarIdentificador() {
+        //<AsignarIdentificador> ::= <Identificador> :
+        this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
+        if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
+                this.tokenProvisional=":";  //AQUI SE MANDA LLAMAR AL LEXICO
+            if(this.tokenProvisional.equals(":")){
+                //FALTA
+            }else this.imprimirErrorSimbolo(":");
+        }else this.imprimirError("un identificador");
     }
     
-    private void auxNI() {
+    private void numeroIdentificador() {
         /*<AuxNI> ::= <Identificador>
         <AuxNI> ::= <Numero>*/
         this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
@@ -106,59 +104,57 @@ public class BNF {
 
     }
     
-    private void auxTipo() {
-        //<AuxTipo> ::= <Tipo>  <Identificador> <AuxI2>
-        tipo();
+    private void variables() {
+        //<Variables> ::= <TipoDato>  <Identificador> <MasVariables>
+        //<Variables > ::= ԑ
+
+        tipoDato();
         this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
         if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-            auxI2();
+            masVariables();
         }else this.imprimirError("identificador");
     }
     
-    private void auxI2() {
+    private void masVariables() {
         /* <AuxI2> ::= ~ <Identificador> <AuxI2>
             <AuxI2> ::= . */
         this.tokenProvisional="~";//AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("~")){
             this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
             if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-                auxI2();
+                masVariables();
             }else this.imprimirError("un identificador");
         }else this.imprimirErrorSimbolo("~");
     }
-    private void auxFoncion() {
-        //<AuxFoncion>::= FONCION <Tipo> <Identificador> [ ] { <Inicialización> <Instrucciones> <AuxInst> } <AuxFoncion>
-        //< AuxFoncion> ::= ԑ
+    private void funciones() {
+        //<Funciones>::= FONCION <TipoDato> <Identificador> [ ] { <Inicialización> <Instrucciones> <MásInstrucciones>} <Funciones>
+        //< Funciones> ::= ԑ
+        
         this.tokenProvisional="FONCION";//AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("FONCION")){
-            tipo();
+            tipoDato();
             this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
             if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-                   this.tokenProvisional="["; //AQUI SE MANDA LLAMAR AL LEXICO
-                   if(this.tokenProvisional.equals("[")){
-                        this.tokenProvisional="["; //AQUI SE MANDA LLAMAR AL LEXICO
-                        if(this.tokenProvisional.equals("]")){
-                            this.tokenProvisional="{"; //AQUI SE MANDA LLAMAR AL LEXICO
-                            if(this.tokenProvisional.equals("{")){
-                                 inicializacion();
-                                 instrucciones();
-                                 auxInst();
-                                 if(this.tokenProvisional.equals("}")){ //AQUI SE MANDA LLAMAR AL LEXICO
-                                     auxFoncion();
-                                 }else this.imprimirErrorSimbolo("}");
-                            }else this.imprimirErrorSimbolo("}");
-                        }else this.imprimirErrorSimbolo("]");
-                   }else this.imprimirErrorSimbolo("[");
+                corchetes();
+                this.tokenProvisional="{"; //AQUI SE MANDA LLAMAR AL LEXICO
+                if(this.tokenProvisional.equals("{")){
+                     inicializacion();
+                     instrucciones();
+                     masInstrucciones();
+                     if(this.tokenProvisional.equals("}")){ //AQUI SE MANDA LLAMAR AL LEXICO
+                         funciones();
+                     }else this.imprimirErrorSimbolo("}");
+                }else this.imprimirErrorSimbolo("}");
             }else this.imprimirError("un identificador");
         }else this.imprimirErrorPalabra("FONCION");
     }
     
-    private void auxIn0(){
-        //{ <Instrucciones> <AuxInst> }
+    private void instruccionesConCorchetes(){
+        //{ <Instrucciones> <MásInstrucciones> }
         this.tokenProvisional="{"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("{")){
              instrucciones();
-             auxInst();
+             masInstrucciones();
              this.tokenProvisional="}"; //AQUI SE MANDA LLAMAR AL LEXICO
              if(this.tokenProvisional.equals("}")){ //AQUI SE MANDA LLAMAR AL LEXICO
                  //FALTA
@@ -167,87 +163,82 @@ public class BNF {
     }
     
     private void instrucciones() {
-        //<Identificador> : <AuxI0> <AuxI1>
-        this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-        if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-            this.tokenProvisional=":";  //AQUI SE MANDA LLAMAR AL LEXICO
-            if(this.tokenProvisional.equals(":")){ //AQUI SE MANDA LLAMAR AL LEXICO
-                auxI0();
-                auxI1();
-            }else this.imprimirErrorSimbolo(":");
-        }else if(this.tokenProvisional.equals("SI")){
-            //SI <AuxCon> <AuxIn0> <AuxSi1> <AuxSi2>
-            auxCon();
-            auxIn0();
-            auxSi1();
-            auxSi2();
+        this.tokenProvisional="palabra reservada";  //AQUI SE MANDA LLAMAR AL LEXICO
+        if(this.tokenProvisional.equals("SI")){
+            estructuraSI();
         }else if(this.tokenProvisional.equals("POUR")){
-            //POUR ( <Identificador> : <AuxNI> . <Identificador> <SimRel> <AuxNI> .  <Identificador> : <identificador> <AuxPo1> <AuxNI>  ) <AuxIn0>
-
-            this.tokenProvisional="(";  //AQUI SE MANDA LLAMAR AL LEXICO
-            if(this.tokenProvisional.equals("(")){
-                this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-                if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
-                    this.tokenProvisional=":";  //AQUI SE MANDA LLAMAR AL LEXICO
-                    if(this.tokenProvisional.equals(":")){
-                        auxNI();
-                        this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
-                        if(this.tokenProvisional.equals(".")){
-                            this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-                             if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
-                                 simRel();
-                                 auxNI();
-                                 this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
-                                  if(this.tokenProvisional.equals(".")){
-                                        this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-                                        if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
-                                            this.tokenProvisional=":";  //AQUI SE MANDA LLAMAR AL LEXICO
-                                            if(this.tokenProvisional.equals(":")){
-                                                this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
-                                                if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
-                                                    auxPo1();
-                                                    auxNI();
-                                                    this.tokenProvisional=")";  //AQUI SE MANDA LLAMAR AL LEXICO
-                                                    if(this.tokenProvisional.equals(")")){
-                                                        auxIn0();
-                                                    }else this.imprimirErrorSimbolo(")");
-                                                }else this.imprimirError("un identificador");
-                                            }else this.imprimirErrorSimbolo(":");
-                                        }else this.imprimirError("un identificador");
-                                   }else this.imprimirErrorSimbolo(".");
-                             }else this.imprimirError("un identificador");
-                       }else this.imprimirErrorSimbolo(".");
-                    }else this.imprimirErrorSimbolo(":");
-                }else this.imprimirError("un identificador");
-            }else this.imprimirErrorSimbolo("(");
+            estructuraPOUR(); 
         }else if(this.tokenProvisional.equals("TANDISQUE")){
-            //<AuxCon> <AuxIns0>
-            auxCon();
-            auxIn0();
+            //<Instrucciones>::= TANDISQUE <CondicionesConParentesis> <InstruccionesConCorchetes>
+            condicionesConParentesis();
+            instruccionesConCorchetes();
         }else if(this.tokenProvisional.equals("FAIRE")){
-            //<AuxIn0> TANDISQUE <AuxCon> .
-            auxIn0();
-            this.tokenProvisional="TANDISQUE";
-            if(this.tokenProvisional.equals("TANDISQUE")){
-                auxCon();
-            }else this.imprimirErrorPalabra("TANDISQUE");
-        }else this.imprimirError("un identificador o \"SI\" o \"POUR\" o \"TANDISQUE\" o \"FAIRE\"");
-    }
+            estructuraFAIRE();
+        }else{
+            /*<Instrucciones>::= <AsignarIdentificador> <NumeroIdentificador_LlamarFuncion> <OperacionesAritmeticas>*/
+            asignarIdentificador();
+            numeroIdentificador_LlamarFuncion();
+            operacionesAritmeticas();
+        }
+     }
     
-    private void auxI0(){
-        //<AuxI0>::=<Numero>
-        //<AuxI0>::=<Identificador> <AuxI01>
-        this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
+    private void estructuraPOUR(){
+        /*<EstructuraPOUR> ::= ( <AsignarIdentificador> <NumeroIdentificador> . <Identificador> 
+        <SimbolosRelacionales> <NumeroIdentificador> . <AsignarIdentificador><identificador> 
+        <SumaResta> <NumeroIdentificador>  ) <InstruccionesConCorchetes>*/
+        this.tokenProvisional="(";  //AQUI SE MANDA LLAMAR AL LEXICO
+        if(this.tokenProvisional.equals("(")){
+            asignarIdentificador();
+            numeroIdentificador();
+            this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
+            if(this.tokenProvisional.equals(".")){
+                this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
+                 if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
+                     simbolosRelacionales();
+                     numeroIdentificador();
+                     this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
+                      if(this.tokenProvisional.equals(".")){
+                            this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
+                            asignarIdentificador();
+                            this.tokenProvisional="identificador";  //AQUI SE MANDA LLAMAR AL LEXICO
+                            if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
+                                sumaResta();
+                                numeroIdentificador();
+                                this.tokenProvisional=")";  //AQUI SE MANDA LLAMAR AL LEXICO
+                                if(this.tokenProvisional.equals(")")){
+                                    instruccionesConCorchetes();
+                                }else this.imprimirErrorSimbolo(")");
+                            }else this.imprimirError("un identificador");
+                       }else this.imprimirErrorSimbolo(".");
+                 }else this.imprimirError("un identificador");
+           }else this.imprimirErrorSimbolo(".");
+        }else this.imprimirErrorSimbolo("(");
+    }
+    private void estructuraFAIRE(){
+        //<EstructuraFAIRE>::=<InstruccionesConCorchetes> TANDISQUE <CondicionesConParentesis> .
+        instruccionesConCorchetes();
+        this.tokenProvisional="TANDISQUE";
+        if(this.tokenProvisional.equals("TANDISQUE")){
+            condicionesConParentesis();
+        }else this.imprimirErrorPalabra("TANDISQUE");
+    }
+    private void numeroIdentificador_LlamarFuncion(){
+        /*
+        <NumeroIdentificador_LlamarFuncion>::=<Numero>
+        <NumeroIdentificador_LlamarFuncion>::=<Identificador> <Corchetes_Vacion>
+        */
+        this.tokenProvisional="identificador o numero";  //AQUI SE MANDA LLAMAR AL LEXICO
         if(AnalizadorLexico.expresionSonNumeros(this.tokenProvisional)){
-            
+            //FALTA
         }else if(AnalizadorLexico.expresionEsIdentificador(this.tokenProvisional)){//????
-            auxI01();
+            corchetes_Vacio();
         }else this.imprimirError("un número o identificador");
     }
     
-    private void auxI01(){
-        //<AuxI01>::=ɛ
-        //<AuxI01>::= [ ]
+    private void corchetes_Vacio(){
+        /*<Corchetes_Vacion>::=ɛ
+        <Corchetes_Vacion>::= [ ]
+        */
         this.tokenProvisional="[";  //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("[")){
              this.tokenProvisional="]"; //AQUI SE MANDA LLAMAR AL LEXICO
@@ -257,27 +248,40 @@ public class BNF {
         }else this.imprimirErrorSimbolo("[");
     }
     
-    private void auxI1(){
-        //<AuxI1>::= .
-        //<AuxI1>::= <AuxI2> <AuxNI> <AuxI1>
+    private void corchetes(){
+        /*
+        <Corchetes>::= [ ]
+        */
+        this.tokenProvisional="[";  //AQUI SE MANDA LLAMAR AL LEXICO
+        if(this.tokenProvisional.equals("[")){
+             this.tokenProvisional="]"; //AQUI SE MANDA LLAMAR AL LEXICO
+             if(this.tokenProvisional.equals("]")){ //AQUI SE MANDA LLAMAR AL LEXICO
+                 //FALTA
+             }else this.imprimirErrorSimbolo("]");
+        }else this.imprimirErrorSimbolo("[");
+    }
+    
+    private void operacionesAritmeticas(){
+        /*<OperacionesAritmeticas>::= .
+        <OperacionesAritmeticas>::= <SimbolosAritmeticos> <NumeroIdentificador> <OperacionesAritmeticas>
+        */
         this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals(".")){
             //FALTA
         }else{
-            auxI2();
-            auxNI();
-            auxI1();
+            simbolosAritmeticos();
+            numeroIdentificador();
+            operacionesAritmeticas();
         }
     }
     
-    private void auxI12(){
-        /*<AuxI2>::= *
-        <AuxI2>::= -
-        <AuxI2>::= +
-        <AuxI2>::= /
-        <AuxI2>::= ^
-        <AuxI2>::= %
-        */
+    private void simbolosAritmeticos(){
+        /*<SimbolosAritmeticos>::= *
+        <SimbolosAritmeticos>::= -
+        <SimbolosAritmeticos>::= +
+        <SimbolosAritmeticos>::= /
+        <SimbolosAritmeticos>::= ^
+        <SimbolosAritmeticos>::= %*/
         this.tokenProvisional=".";  //AQUI SE MANDA LLAMAR AL LEXICO
         switch(this.tokenProvisional){
             case "*":
@@ -296,25 +300,38 @@ public class BNF {
         }
     }
     
-    private void auxSi1(){
-        //<AuxSi1>::= Ɛ
-        //<AuxSi1>::= SIONSI <AuxCon>  <AuxIn0> <AuxSi1>
+    private void estructuraSI(){
+        /*<EstructuraSI>::=<CondicionesConParentesis> <InstruccionesConCorchetes> <SiAnidado> <FinalSi>*/
+        condicionesConParentesis();
+        instruccionesConCorchetes();
+        siAnidado();
+        finalSi();
+    }
+    
+    private void siAnidado(){
+        /*<SiAnidado>::= Ɛ
+        <SiAnidado>::= SIONSI <CondicionesConParentesis>  <InstruccionesConCorchetes> <SiAnidado>
+        */
         this.tokenProvisional = "SIONSI"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("SIONSI")){
-            auxCon();
-            auxIn0();
-            auxSi1();
+            condicionesConParentesis();
+            instruccionesConCorchetes();
+            siAnidado();
         }else this.imprimirErrorPalabra("SIONSI");
     }
-    private void auxSi2(){
-        //<AuxSi2>::=AUTREI <AuxInt0>
-        //<AuxSi2>::= Ɛ
+    private void finalSi(){
+        /*<FinalSi>::=AUTREI <InstruccionesConCorchetes>
+        <FinalSi>::= Ɛ
+        */
         this.tokenProvisional = "AUTREI"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("AUTREI")){
-            auxIn0();
+            instruccionesConCorchetes();
         }else this.imprimirErrorPalabra("AUTREI");
     }
-    private void auxPo1(){
+    private void sumaResta(){
+        /*<SumaResta>::= -
+        <SumaResta>::= +
+        */
         this.tokenProvisional = "+"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("+")){
             //FALTA
@@ -323,8 +340,8 @@ public class BNF {
         }else this.imprimirErrorPalabra("+ o -");
     }
     
-    private void auxCon(){
-        //<AuxCon>::=( <Condición> )
+    private void condicionesConParentesis(){
+        //<CondicionesConParentesis>::=( <Condición> )
          this.tokenProvisional = "("; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("(")){
             condicion();
@@ -336,20 +353,24 @@ public class BNF {
     }
     
     private void condicion(){
-        //<Condición>::= ¬ <AuxCon> <AuxC3>
-        //<Condición>::= <AuxNI> <SimRel> <AuxNI> <AuxC3>
+        /*<Condición>::= ¬ <CondicionesConParentesis> <MasCondiciones>
+        <Condición>::= <NumeroIdentificador> <SimbolosRelacionales> <NumeroIdentificador> <MasCondiciones>
+        */
         this.tokenProvisional = "¬"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("¬")){
-            auxCon();
-            auxC3();
+            condicionesConParentesis();
+            masCondiciones();
         }else{
-           auxNI();
-           simRel();
-           auxNI();
-           auxC3();
+           numeroIdentificador();
+           simbolosRelacionales();
+           numeroIdentificador();
+           masCondiciones();
         }
     }
-    private void auxC2(){
+    private void andOr(){
+        /*<AndOr>::= &
+        <AndOr>::= °
+        */
         this.tokenProvisional = "&"; //AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("&")){
             //FALTA
@@ -358,42 +379,45 @@ public class BNF {
         }else this.imprimirErrorSimbolo("& o °");
     }
     
-    private void auxC3(){
-        //<AuxC3>::= <AuxC2><AuxCon><AuxC3>
-        //<AuxC3>::= Ɛ
-        auxC2();
-        auxCon();
-        auxC3();
+    private void masCondiciones(){
+        /*<MasCondiciones>::= <AndOr><CondicionesConParentesis><MasCondiciones>
+        <MasCondiciones>::= Ɛ
+        */
+        andOr();
+        condicionesConParentesis();
+        masCondiciones();
     }
-    private void simRel(){
-        /*<SimRel>::= ==
-<SimRel>::= !=
-<SimRel>::= <<
-<SimRel>::= >>
-<SimRel>::= <=
-<SimRel>::= >=
-*/
+    private void simbolosRelacionales(){
+       /*<SimbolosRelacionales>::= ==
+        <SimbolosRelacionales>::= !=
+        <SimbolosRelacionales>::= <<
+        <SimbolosRelacionales>::= >>
+        <SimbolosRelacionales>::= <=
+        <SimbolosRelacionales>::= >=
+        */
         this.tokenProvisional = "==";//AQUI SE MANDA LLAMAR AL LEXICO
-        if(this.tokenProvisional.equals("==")){
-            
-        }else if(this.tokenProvisional.equals("!=")){
-            
-        }else if(this.tokenProvisional.equals("<<")){
-            
-        }else if(this.tokenProvisional.equals(">>")){
-            
-        }else if(this.tokenProvisional.equals("<=")){
-            
-        }else if(this.tokenProvisional.equals(">=")){
-            
-        }else this.imprimirError("un simbolo relacional");
+        switch(this.tokenProvisional){
+            case "==":
+                break;
+            case "!=":
+                break;
+            case "<<":
+                break;
+            case ">>":
+                break;
+            case "<=":
+                break;
+            case ">=":
+                break;
+            default : this.imprimirError("un simbolo relacional");
+        }
     }
-    private void tipo(){
-        /*<Tipo>::= DEC
-<Tipo>::= CARAC
-<Tipo>::= CHAINE
-<Tipo>::= ENT
-*/
+    private void tipoDato(){
+        /*<TipoDato>::= DEC
+        <TipoDato>::= CARAC
+        <TipoDato>::= CHAINE
+        <TipoDato>::= ENT
+        */
        this.tokenProvisional = "DEC";//AQUI SE MANDA LLAMAR AL LEXICO
         if(this.tokenProvisional.equals("DEC")){
             
@@ -405,6 +429,7 @@ public class BNF {
             
         }else this.imprimirError("un tipo de dato");
     }
+    
     private void imprimirErrorPalabra(String palabraEsperada){
         System.out.println("Se esperaba la palabra: " + palabraEsperada);
     }
