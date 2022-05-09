@@ -15,9 +15,9 @@ public class AnalizadorLexico {
     
     public static String expresion;
     public static char caracter;
-
+    
     //Revisa si existen más tokens por revisar, si existe, llama a una función para validar los tokens individualmente.
-    public static void revisarListaDeTokens() throws IOException {
+    public static boolean revisarListaDeTokens() throws IOException {
         
         while(LectorTxt.getHayTokens() == true){  //mientras haya más tokens = true
             
@@ -31,12 +31,13 @@ public class AnalizadorLexico {
             
             }else{
                 
-                System.out.println("Token inválido \n");
-            
+                System.out.println("Token inválido\n");
+                return false;
             }
             
         }
         System.out.println("\n No hay más tokens");
+        return true;
     }
     
     public static void inicializarToken(){
@@ -323,5 +324,53 @@ public class AnalizadorLexico {
         expresion += caracter;
         caracter = LectorTxt.obtenerSiguienteCaracter();
     }
+    
+    //funciones que usa vanessa
+    public static boolean expresionSonNumeros(String numero) {
+        //System.out.println("VALIDANDO SI SON NÚMEROS...");
+        for(int i=0; i<numero.length(); ){
+        //for(int i=0; i<numero.length(); i++){
+            if(Character.isDigit(numero.charAt(i))){ //revisar si es digito/número
+                while(Character.isDigit(numero.charAt(i))){ //mientras la expresión tenga números.
+                    i++;
+                }
+                if(46==(int)numero.charAt(i)){ //si es un punto, puede ser número decimal
+                    i++;
+                    if(Character.isDigit(numero.charAt(i))){ //si hay un número después del punto, es decimal.
+
+                        while(i<numero.length() && Character.isDigit(numero.charAt(i))){ //continúa revisando que lo que sigue sean números.
+                            System.out.println(i + " " +numero.charAt(i));
+                            i++;
+                        }
+                        if(i==numero.length()){ //si lo que sigue es vacío, es válido. 
+                            return true; 
+                         }
+                    }
+                }else if(numero.charAt(i) == '\0'){ //si lo que sigue es vacío, es válido. 
+                   return true; 
+                }
+            }
+        }
+        return false;
+    }   
+    public static boolean expresionEsIdentificador(String identificador) {
+        //System.out.println("VALIDANDO SI ES IDENTIFICADOR...");
+        for(int i=0; i<identificador.length(); ){
+            if (Character.isLowerCase(identificador.charAt(i))) { //tiene una minuscula      
+                i++;
+                if (Character.isLowerCase(identificador.charAt(i))) { //tiene dos minusculas
+                    i++;
+                    //( [a-z] | [A-Z] | [0-9] )^*
+                    while ((i<identificador.length()) && (Character.isLowerCase(identificador.charAt(i)) == true || Character.isUpperCase(identificador.charAt(i)) == true || Character.isDigit(identificador.charAt(i)))){
+                        i++;
+                    }
+                    if(i==identificador.length()) return true; 
+                    else return false;
+                } else return false;
+            }else return false;
+        }
+        return false;
+    }
+    
     
 }

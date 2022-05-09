@@ -14,8 +14,12 @@ import java.io.IOException;
  */
 public class Main {
     public static void main(String args[]) throws FileNotFoundException, IOException {
-        LectorTxt t = new LectorTxt();
+        LectorTxt.iniciar();
         
-        AnalizadorLexico.revisarListaDeTokens();
+        if(AnalizadorLexico.revisarListaDeTokens() == true){
+            LectorTxt.reiniciarMismoTxt();
+            
+            //iniciar bnf.
+        }
     }
 }

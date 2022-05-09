@@ -26,24 +26,51 @@ public class LectorTxt {
     public static String expresionLeida;    
     public static boolean hayTokens;
     
-    public LectorTxt(){
+    public static void iniciar(){
         leerArchivo();
         
         contadorTokenLeido = 0;
         contadorExpresionLeida = 0;
+        expresionLeida = "";
         
         hayTokens = true;
         
         try{
             expresionLeida = getLista().get(contadorTokenLeido);
         }catch(Exception e){
-            System.out.println("No se ha encontrado ningún token en el archivo");
+            System.out.println("No se ha encontrado ningún token en el archivo. Terminando programa");
             System.exit(0); //Terminar todo el programa.
         }
     }
     
+    public static void reiniciarMismoTxt(){
+        contadorTokenLeido = 0;
+        contadorExpresionLeida = 0;
+        hayTokens = true;
+        
+        try{
+            expresionLeida = getLista().get(contadorTokenLeido);
+        }catch(Exception e){
+            System.out.println("No se ha encontrado ningún token en el archivo. Terminando programa");
+            System.exit(0); //Terminar todo el programa.
+        }
+    }
+    
+    public static String enviarSiguienteToken(){
+        contadorTokenLeido++;
+        
+        if(contadorTokenLeido < getLista().size()){
+            expresionLeida = getLista().get(contadorTokenLeido);
+            contadorExpresionLeida = 0;
+            
+            return expresionLeida;
+        }else{
+            return "-1";
+        }
+    }
+    
     //Leer el archivo (csc o txt)
-    public void leerArchivo(){
+    public static void leerArchivo(){
         String aux, texto;
         ArrayList<String> listaAux = new ArrayList();
         
@@ -106,16 +133,13 @@ public class LectorTxt {
     public static void siguienteToken(){
         contadorTokenLeido++;
         if(contadorTokenLeido < getLista().size()){
-            obtenerSiguienteToken();
+            expresionLeida = getLista().get(contadorTokenLeido);
+            contadorExpresionLeida = 0;
         }else{
             noHayMasTokens();
         }
     }
-    
-    public static void obtenerSiguienteToken(){
-        expresionLeida = getLista().get(contadorTokenLeido);
-        contadorExpresionLeida = 0;
-    }
+
     public static void noHayMasTokens(){
         hayTokens = false;
     }

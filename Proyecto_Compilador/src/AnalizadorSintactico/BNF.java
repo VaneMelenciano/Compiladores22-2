@@ -35,6 +35,13 @@ public class BNF {
             imprimirErrorPalabra("INICIO");
         }
     }
+    
+    private void inicializacion() {
+        //<Inicialización>::= <Constantes> <Variables> <Funciones>
+        constantes();
+        variables();
+        funciones();
+    }
 
     private void masInstrucciones() {
         //<MásInstrucciones> ::= . <Instrucciones> <MásInstrucciones>
@@ -44,13 +51,6 @@ public class BNF {
             masInstrucciones(); // <- se manda llamar a si, después se arregla eso
         }else this.imprimirErrorSimbolo(".");
         //ԑ <- después se programa
-    }
-
-    private void inicializacion() {
-        //<Inicialización>::= <Constantes> <Variables> <Funciones>
-        constantes();
-        variables();
-        funciones();
     }
 
     private void constantes() {
