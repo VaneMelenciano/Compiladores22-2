@@ -6,6 +6,7 @@
 package AnalizadorSintactico;
 
 import AnalizadorLexico.AnalizadorLexico;
+import AnalizadorLexico.LectorTxt;
 
 /**
  *
@@ -16,6 +17,10 @@ import AnalizadorLexico.AnalizadorLexico;
 public class BNF {
     private String tokenProvisional;
     
+    private String siguienteToken(){
+        String token = LectorTxt.enviarSiguienteToken();
+        
+    }
     private void programa(){
         //INICIO <Inicialización> <Instrucciones> <MásInstrucciones> FIN
                 //Se manda llamar a la palabra del archivo porque se espera un terminal "INICIO"
