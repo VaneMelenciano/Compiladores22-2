@@ -117,6 +117,20 @@ public class LectorTxt {
         }
     }
     
+    public static void regresarAnteriorCaracter(){
+        contadorExpresionLeida--;
+    }
+    
+    public static char revisarSiguienteCaracter(){
+        char caracterAdevolver;
+        try{
+            caracterAdevolver = expresionLeida.charAt(contadorExpresionLeida);
+        }catch(StringIndexOutOfBoundsException e){ //En caso de que la expresión leida haya terminado, retorna '\0'
+            caracterAdevolver = '\0';
+        }
+        return caracterAdevolver;
+    }
+    
     public static char obtenerSiguienteCaracter(){
         char caracterAdevolver;
         try{
@@ -126,6 +140,7 @@ public class LectorTxt {
             caracterAdevolver = '\0';
            
             siguienteToken();
+            System.out.println("siguiente token!");
         }
         return caracterAdevolver;
     }

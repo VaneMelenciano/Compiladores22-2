@@ -10,8 +10,11 @@ package AnalizadorLexico;
  */
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AnalizadorLexico {
+    
+    public static ArrayList<String> listaFiltrada;
     
     public static String expresion;
     public static char caracter;
@@ -19,6 +22,7 @@ public class AnalizadorLexico {
     //Revisa si existen más tokens por revisar, si existe, llama a una función para validar los tokens individualmente.
     public static boolean revisarListaDeTokens() throws IOException {
         
+        listaFiltrada = new ArrayList<String>();
         while(LectorTxt.getHayTokens() == true){  //mientras haya más tokens = true
             
             System.out.println("--- Nuevo Token --- ");
@@ -26,12 +30,12 @@ public class AnalizadorLexico {
             inicializarToken();
             
             if(validarToken() == true){
-                 
-                System.out.println("Token válido: " + expresion + "\n");
+                anadirTokenAlistaFiltrada(expresion); 
+                System.out.println("Token válido: '" + expresion + "'\n");
             
             }else{
                 
-                System.out.println("Token inválido\n");
+                System.out.println("Token inválido '" + expresion +  "'\n");
                 return false;
             }
             
@@ -58,6 +62,8 @@ public class AnalizadorLexico {
         
         if(expresionEsTexto()) return true;
         
+        if(expresionEsPunto()) return true;
+        
         return false;
     }
 
@@ -70,15 +76,13 @@ public class AnalizadorLexico {
             while(Character.isUpperCase(caracter)){ //mientras el siguiente char sea mayúscula, continúa en el ciclo.
                 guardarCaracterYobtenerSiguiente();
             }
-            
-            if(caracter == '\0'){ //si ya agregró a cadena todas las mayusculas y ya no hay más letras
-                return true;
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         return false;
     }
     
-    //validar si cumple [a-z]+ [a-z]+ ( [a-z] | [A-Z] | [0-9] )^* .
+    //validar si cumple [a-z]+ [a-z]+ ( [a-z] | [A-Z] | [0-9] )^*
     public static boolean expresionEsIdentificador() throws IOException {
         System.out.println("VALIDANDO SI ES IDENTIFICADOR...");
         
@@ -94,14 +98,8 @@ public class AnalizadorLexico {
                 while (Character.isLowerCase(caracter) == true || Character.isUpperCase(caracter) == true || Character.isDigit(caracter)) {
                     guardarCaracterYobtenerSiguiente();
                 }
-                /*if (46 == (int) caracter) { //  46 es . en codigo ASCII
-                    //tiene el último carácter, es identificador.
-                   expresion += caracter;
-                    return true;
-                }*/
-                if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                        return true; 
-                }
+                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+                return true;
                 
             }
         }
@@ -119,83 +117,77 @@ public class AnalizadorLexico {
                 guardarCaracterYobtenerSiguiente();
             }
             
-            if(46==(int)caracter){ //si es un punto, puede ser número decimal
-                
-                guardarCaracterYobtenerSiguiente();
-                
-                if(Character.isDigit(caracter)){ //si hay un número después del punto, es decimal.
+            if(46==(int)caracter) { //si es un punto, puede ser número decimal
+                if(LectorTxt.revisarSiguienteCaracter() != '\0'){
                     
-                    while(Character.isDigit(caracter)){ //continúa revisando que lo que sigue sean números.
+                    if(Character.isDigit(LectorTxt.revisarSiguienteCaracter())){
                         guardarCaracterYobtenerSiguiente();
-                    }
-                    if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                        return true; 
-                     }
-                }
-            }else if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-               return true; 
+                        while(Character.isDigit(caracter)){ //continúa revisando que lo que sigue sean números.
+                            guardarCaracterYobtenerSiguiente();
+                        }
+                        if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+                        return true;   
+                    }                    
+                }    
             }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true; 
         }
         return false;
     }
 
     //validar [+ / - / / / * / ^ / %]
     public static boolean expresionEsOperador() throws IOException{
-        System.out.println("VALIDANDO SI SON SÍMBOLOS...");
+        System.out.println("VALIDANDO SI ES OPERADOR...");
         //validando '+'
         if(caracter == '+'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         //validando '-'
         if(caracter == '-'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         //validando '/'
         if(caracter == '/'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         //validando '*'
         if(caracter == '*'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         //validando '^'
         if(caracter == '^'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         //validando '%'
         if(caracter == '%'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         return false;
     }   
     
-    //validar [== / != / << / >> / <= / >=]
+    //validar [== / != / << / >> / <= / >= / ~ / : / | ]
     public static boolean expresionEsSimbolo() throws IOException{
-        System.out.println("VALIDANDO SI SON SÍMBOLOS...");
+        System.out.println("VALIDANDO SI ES SÍMBOLO...");
         
         //validando '=='
         if(caracter == '='){
             guardarCaracterYobtenerSiguiente();
             if(caracter == '='){
                 guardarCaracterYobtenerSiguiente();
+                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
                 return true;
             }
         }
@@ -230,73 +222,85 @@ public class AnalizadorLexico {
         //validando '&'
         if(caracter == '&'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '°'
         if(caracter == '°'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '¬'
         if(caracter == '¬'){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '('
         if(caracter == 40){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         
         //validando ')'
         if(caracter == 41){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '{'
         if(caracter == 123){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '}'
         if(caracter == 125){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando '['
         if(caracter == 91){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
 
         //validando ']'
         if(caracter == 93){
             guardarCaracterYobtenerSiguiente();
-            if(caracter == '\0'){ //si lo que sigue es vacío, es válido. 
-                return true; 
-            }
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
+        }
+        
+        //validando '~'
+        if(caracter == 126){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
+        }
+        
+        //validando ':'
+        if(caracter == 58){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
+        }
+        
+        //validando '|'
+        if(caracter == 124){
+            guardarCaracterYobtenerSiguiente();
+            if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+            return true;
         }
         
         return false;
@@ -304,7 +308,7 @@ public class AnalizadorLexico {
     
     //validar 'Texto'
     public static boolean expresionEsTexto() throws IOException{
-        System.out.println("VALIDANDO SI ES PALABRA 'Texto'...");
+        System.out.println("VALIDANDO SI ES 'Texto'...");
         
         if(caracter == '\''){ //si inicia con comilla simple
             guardarCaracterYobtenerSiguiente();
@@ -319,6 +323,19 @@ public class AnalizadorLexico {
         }
         return false;//si ya agregró a cadena todas los caracteres y ya no hay más letras
     }
+    
+    
+    
+    public static boolean expresionEsPunto() throws IOException{
+        System.out.println("VALIDANDO SI ES Punto...");
+        
+        if(caracter == '.'){
+            guardarCaracterYobtenerSiguiente();
+            return true;
+        }
+        return false;
+    }
+    
     
     public static void guardarCaracterYobtenerSiguiente() throws IOException{
         expresion += caracter;
@@ -346,7 +363,7 @@ public class AnalizadorLexico {
                             return true; 
                          }
                     }
-                }else if(numero.charAt(i) == '\0'){ //si lo que sigue es vacío, es válido. 
+                }else if(numero.charAt(i) == '\0' || caracter == '.'){ //si lo que sigue es vacío, es válido. 
                    return true; 
                 }
             }
@@ -373,4 +390,12 @@ public class AnalizadorLexico {
     }
     
     
+    
+    //Lista filtrada
+    public static void anadirTokenAlistaFiltrada(String nuevoToken){
+        listaFiltrada.add(nuevoToken);
+    }
+    public static ArrayList<String> getListaFiltrada(){
+        return listaFiltrada;
+    }
 }

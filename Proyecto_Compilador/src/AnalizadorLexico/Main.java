@@ -7,6 +7,7 @@ package AnalizadorLexico;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *
@@ -17,8 +18,6 @@ public class Main {
         LectorTxt.iniciar();
         
         if(AnalizadorLexico.revisarListaDeTokens() == true){
-            LectorTxt.reiniciarMismoTxt();
-            
             //iniciar bnf.
         }
     }
