@@ -178,16 +178,16 @@ public class AnalizadorLexico {
         return false;
     }   
     
-    //validar [== / != / << / >> / <= / >= / ~ / : / | ]
+    //validar [== / != / << / >> / <= / >= / ~ / : / | / # ]
     public static boolean expresionEsSimbolo() throws IOException{
         System.out.println("VALIDANDO SI ES SÍMBOLO...");
         
         //validando '=='
         if(caracter == '='){
-            guardarCaracterYobtenerSiguiente();
-            if(caracter == '='){
+            guardarCaracter();
+            if(LectorTxt.revisarSiguienteCaracter() == '='){
                 guardarCaracterYobtenerSiguiente();
-                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+                //if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
                 return true;
             }
         }
@@ -197,8 +197,9 @@ public class AnalizadorLexico {
             guardarCaracterYobtenerSiguiente();
             if(caracter == '='){
                 guardarCaracterYobtenerSiguiente();
+                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
                 return true;
-            }
+            }else return false;
         }
         
         //validando '<<' y '<='
@@ -206,6 +207,7 @@ public class AnalizadorLexico {
             guardarCaracterYobtenerSiguiente();
             if(caracter == '<' || caracter == '='){
                 guardarCaracterYobtenerSiguiente();
+                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
                 return true;
             }
         }
@@ -215,6 +217,8 @@ public class AnalizadorLexico {
             guardarCaracterYobtenerSiguiente();
             if(caracter == '>' || caracter == '='){
                 guardarCaracterYobtenerSiguiente();
+                if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
+                
                 return true;
             }
         }
@@ -226,8 +230,8 @@ public class AnalizadorLexico {
             return true;
         }
 
-        //validando '°'
-        if(caracter == '°'){
+        //validando '#'
+        if(caracter == '#'){
             guardarCaracterYobtenerSiguiente();
             if(caracter != '\0') LectorTxt.regresarAnteriorCaracter();
             return true;
@@ -342,6 +346,10 @@ public class AnalizadorLexico {
         caracter = LectorTxt.obtenerSiguienteCaracter();
     }
     
+    public static void guardarCaracter(){
+        expresion += caracter; 
+   }
+    
     //funciones que usa vanessa
     public static boolean expresionSonNumeros(String numero) {
         //System.out.println("VALIDANDO SI SON NÚMEROS...");
@@ -371,7 +379,7 @@ public class AnalizadorLexico {
             }else return false;
         }
         return false;
-    }   
+    }  
     public static boolean expresionEsIdentificador(String identificador) {
         //System.out.println("VALIDANDO SI ES IDENTIFICADOR...");
         for(int i=0; i<identificador.length(); ){

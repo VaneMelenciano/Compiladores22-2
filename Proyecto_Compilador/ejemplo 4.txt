@@ -1,0 +1,21 @@
+INICIO
+CONS constante14 : 9.
+
+FONCION CARAC unaFuncion [] {
+CARAC variableDeFuncion.
+SI (5<<3){
+	constante14 : constanteAux.
+} 
+SIONSI (8==4 # (5==5)){
+	variableDoS : 10.
+}
+AUTREI{
+	variableTreS : 2.
+}
+}
+
+TANDISQUE(23!=34 & (otraOtraVariable>=34)){
+	variableTreS : variableTreD.
+}
+
+FIN

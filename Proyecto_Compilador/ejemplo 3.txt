@@ -1,0 +1,9 @@
+INICIO
+CHAINE suma.
+FONCION CHAINE nombreFuncion[]{
+	POUR(otraConstante : 9. unaVariable >> 27. variableDos : varibleDos + 2){
+		numero : iaux ^ 2.
+	}
+}
+suma :  nombreFuncion [].
+FIN

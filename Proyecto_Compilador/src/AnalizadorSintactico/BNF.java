@@ -28,16 +28,11 @@ public class BNF {
         //INICIO <Inicialización> <Instrucciones> <MásInstrucciones> FIN
                 //Se manda llamar a la palabra del archivo porque se espera un terminal "INICIO"
         if(this.codigo.get(posicionEnCodigo).equals("INICIO")){
-            System.out.println("1");
             inicializacion();
-            System.out.println("2");
             instrucciones();
-            System.out.println("3");
             masInstrucciones();
-            System.out.println("4");
             
             this.token = this.codigo.get(++posicionEnCodigo);    
-            System.out.println("ñ: " + this.token + this.posicionEnCodigo);
             if(this.token.equals("FIN")){
                     compilacionExitosa();
                 }else{
@@ -51,24 +46,14 @@ public class BNF {
     
     private void inicializacion() {
         //<Inicialización>::= <Constantes> <Variables> <Funciones>
-        System.out.println("1.1");
-        constantes();
-        System.out.println(this.token + " " + this.posicionEnCodigo);
-        System.out.println("1.2");        
+        constantes();     
         variables();
-        System.out.println(this.token + " " + this.posicionEnCodigo);
-        System.out.println("1.3"); 
         funciones();
-        System.out.println(this.token + " " + this.posicionEnCodigo);
-        System.out.println("1.4"); 
     }
 
     private void inicializacionFunciona(){
-        System.out.println("#1" + this.token + " " + this.posicionEnCodigo);
         constantes();
-        System.out.println("#2" + this.token + " " + this.posicionEnCodigo);
         variables();
-        System.out.println("#3" + this.token + " " + this.posicionEnCodigo);
     }
     private void masInstrucciones() {
         //<MásInstrucciones> ::= <Instrucciones> <MásInstrucciones>
@@ -132,13 +117,9 @@ public class BNF {
     private void numeroIdentificador() {
         /*<AuxNI> ::= <Identificador>
         <AuxNI> ::= <Numero>*/
-        System.out.println("?0 " + this.token + " " + this.posicionEnCodigo);
         this.token=this.codigo.get(++posicionEnCodigo);
-        System.out.println("?0.1 " + this.token + " " + this.posicionEnCodigo);
-        if(AnalizadorLexico.expresionEsIdentificador(this.token)){//????
-            System.out.println("?1 " + this.token + " " + this.posicionEnCodigo);
+        if(AnalizadorLexico.expresionEsIdentificador(this.token)){
         }else if(AnalizadorLexico.expresionSonNumeros(this.token)){
-            System.out.println("?2 " + this.token + " " + this.posicionEnCodigo);
         }else this.imprimirError("número o identificador");
     }
     
@@ -176,7 +157,6 @@ public class BNF {
         //< Funciones> ::= ԑ
         this.token=this.codigo.get(++posicionEnCodigo);
         if(!(AnalizadorLexico.expresionEsIdentificador(this.token) || token.equals("SI") || token.equals("POUR") || token.equals("TANDISQUE") || token.equals("FAIRE"))){
-            System.out.println(this.token + " " + this.posicionEnCodigo);
             if(this.token.equals("FONCION")){
                 tipoDato();
                 this.token=this.codigo.get(++posicionEnCodigo);
@@ -195,22 +175,17 @@ public class BNF {
         }else{
             this.posicionEnCodigo--;
         }
-        System.out.println("aq");
     }
     
     private void instruccionesConCorchetes(){
         //{ <Instrucciones> <MásInstrucciones> }
         this.token = this.codigo.get(++posicionEnCodigo);
         if(this.token.equals("{")){
-            System.out.println("t1 " + this.token + " " + this.posicionEnCodigo);
              instrucciones();
-             System.out.println("t2 " + this.token + " " + this.posicionEnCodigo);
              masInstrucciones();
              this.token = this.codigo.get(posicionEnCodigo);
-             System.out.println("t3 " + this.token + " " + this.posicionEnCodigo);
              this.token = this.codigo.get(++posicionEnCodigo);
              if(this.token.equals("}")){ //AQUI SE MANDA LLAMAR AL LEXICO
-                 System.out.println("t4 " + this.token + " " + this.posicionEnCodigo);
                  //FALTA
              }else this.imprimirErrorSimbolo("}");
         }else this.imprimirErrorSimbolo("{");
@@ -218,7 +193,6 @@ public class BNF {
     
     private void instrucciones() {
         this.token=this.codigo.get(++posicionEnCodigo);
-        System.out.println("=1 " + this.token + " " + this.posicionEnCodigo);
         if(this.token.equals("SI")){
             estructuraSI();
         }else if(this.token.equals("POUR")){
@@ -281,6 +255,7 @@ public class BNF {
         <NumeroIdentificador_LlamarFuncion>::=<Identificador> <Corchetes_Vacion>
         */
         this.token=this.codigo.get(++posicionEnCodigo);
+        //System.out.println(": " + this.token + " " + this.posicionEnCodigo);
         if(AnalizadorLexico.expresionSonNumeros(this.token)){
             //FALTA
         }else if(AnalizadorLexico.expresionEsIdentificador(this.token)){
@@ -357,13 +332,9 @@ public class BNF {
     
     private void estructuraSI(){
         /*<EstructuraSI>::=<CondicionesConParentesis> <InstruccionesConCorchetes> <SiAnidado> <FinalSi>*/
-        System.out.println("%1 " + this.token + " " + this.posicionEnCodigo);
         condicionesConParentesis();
-        System.out.println("%2 " + this.token + " " + this.posicionEnCodigo);
         instruccionesConCorchetes();
-        System.out.println("%3 " + this.token + " " + this.posicionEnCodigo);
         siAnidado();
-        System.out.println("%4 " + this.token + " " + this.posicionEnCodigo);
         finalSi();
     }
     
@@ -373,7 +344,7 @@ public class BNF {
         */
         this.token = this.codigo.get(++posicionEnCodigo); //AQUI SE MANDA LLAMAR AL LEXICO
         
-        if(!token.equals("AUTREI")){
+        if(!(token.equals("AUTREI")||token.equals("}"))){ //JUU
             if(this.token.equals("SIONSI")){
                 condicionesConParentesis();
                 instruccionesConCorchetes();
@@ -389,7 +360,7 @@ public class BNF {
         */
         this.token = this.codigo.get(++posicionEnCodigo);
         
-        if(!token.equals(".")){
+        if(!(token.equals(".")||token.equals("}"))){
             if(this.token.equals("AUTREI")){
                 instruccionesConCorchetes();
             }else this.imprimirErrorPalabra("AUTREI");
@@ -413,9 +384,7 @@ public class BNF {
         //<CondicionesConParentesis>::=( <Condición> )
         this.token = this.codigo.get(++posicionEnCodigo);
         if(this.token.equals("(")){
-            System.out.println("&1 " + this.token + " " + this.posicionEnCodigo);
             condicion();
-            System.out.println("&2 " + this.token + " " + this.posicionEnCodigo);
             if(this.codigo.get(++posicionEnCodigo).equals(")")){
                     //FALTA
             }else this.imprimirErrorSimbolo(")");
@@ -432,16 +401,11 @@ public class BNF {
             masCondiciones();
         }else{
             posicionEnCodigo--;
-            System.out.println("¡1 " + this.token + " " + this.posicionEnCodigo);
            numeroIdentificador();
-           System.out.println("¡2 " + this.token + " " + this.posicionEnCodigo);
            simbolosRelacionales();
-           System.out.println("¡3 " + this.token + " " + this.posicionEnCodigo);
            numeroIdentificador();
            this.token = this.codigo.get(this.posicionEnCodigo);
-           System.out.println("¡4 " + this.token + " " + this.posicionEnCodigo);
            masCondiciones();
-           System.out.println("¡5 " + this.token + " " + this.posicionEnCodigo);
         }
     }
     private void andOr(){
@@ -451,9 +415,9 @@ public class BNF {
         this.token = this.codigo.get(++posicionEnCodigo);
         if(this.token.equals("&")){
             //FALTA
-        }else if(this.token.equals("°")){
+        }else if(this.token.equals("#")){
             //FALTA
-        }else this.imprimirErrorSimbolo("& o °");
+        }else this.imprimirErrorSimbolo("& o #");
     }
     
     private void masCondiciones(){
@@ -462,7 +426,6 @@ public class BNF {
         */
         //{“)“, “&”, “°”}
         this.token = this.codigo.get(++posicionEnCodigo);
-        System.out.println("$ " + this.token + " " + this.posicionEnCodigo);
         if(!(this.token.equals(")"))){
             this.posicionEnCodigo--;
             andOr();
