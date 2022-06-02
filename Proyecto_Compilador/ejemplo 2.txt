@@ -1,0 +1,23 @@
+INICIO
+CONS nombreConstante : 5 ~ otraConstante : 9.
+DEC unaVariable ~ otraVariable ~ otraOtraVariable.
+
+FONCION CARAC unaFuncion [] {
+CARAC variableDeFuncion.
+SI (5==3){
+	nombreConstante : 9.
+} 
+SIONSI (|(5==5)){
+	otraConstante : 4+6.
+}
+AUTREI{
+	otraConstante : 4+6.
+}
+}
+
+POUR(otraConstante : 9. unaVariable >> 27. variableDos : varibleDos + 2){
+	TANDISQUE(23==34&(otraOtraVariable>=34)){
+		unaVariable : 23.
+	}
+}
+FIN

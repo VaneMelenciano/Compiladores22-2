@@ -348,12 +348,14 @@ public class AnalizadorLexico {
         for(int i=0; i<numero.length(); ){
         //for(int i=0; i<numero.length(); i++){
             if(Character.isDigit(numero.charAt(i))){ //revisar si es digito/número
-                while(Character.isDigit(numero.charAt(i))){ //mientras la expresión tenga números.
+                if(numero.length()==1) return true;
+                while(i<numero.length() && Character.isDigit(numero.charAt(i))){ //mientras la expresión tenga números.
                     i++;
                 }
-                if(46==(int)numero.charAt(i)){ //si es un punto, puede ser número decimal
+                //System.out.println("i: "+i);
+                if(i<numero.length() && 46==(int)numero.charAt(i)){ //si es un punto, puede ser número decimal
                     i++;
-                    if(Character.isDigit(numero.charAt(i))){ //si hay un número después del punto, es decimal.
+                    if(i<numero.length() && Character.isDigit(numero.charAt(i))){ //si hay un número después del punto, es decimal.
 
                         while(i<numero.length() && Character.isDigit(numero.charAt(i))){ //continúa revisando que lo que sigue sean números.
                             System.out.println(i + " " +numero.charAt(i));
@@ -362,11 +364,11 @@ public class AnalizadorLexico {
                         if(i==numero.length()){ //si lo que sigue es vacío, es válido. 
                             return true; 
                          }
-                    }
-                }else if(numero.charAt(i) == '\0' || caracter == '.'){ //si lo que sigue es vacío, es válido. 
+                    }else return false;
+                }else if(i==numero.length() || numero.charAt(i) == '\0' || caracter == '.'){ //si lo que sigue es vacío, es válido. 
                    return true; 
                 }
-            }
+            }else return false;
         }
         return false;
     }   
